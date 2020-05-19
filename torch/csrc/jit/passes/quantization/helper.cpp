@@ -181,6 +181,10 @@ CallFuncArgs _observe_inputs_call_func = {{"batch_norm", 1}};
 // Aten functions for getting tensor information
 std::vector<std::string> _tensor_info_funcs = {"size"};
 
+// Aten functions whose output will be quantized or not quantized depending
+// on input tensor
+std::vector<std::string> _propagate_quant_ops = {"cat"};
+
 // Check if `use` is an aten function of name `func_name` and if value
 // `v` is the nth argument (if provided) of the function.
 bool matchAtenFuncToUse(
@@ -348,6 +352,10 @@ bool isSingleInputGeneralAtenFunction(Node* n) {
 
 bool isTensorInfoNode(Node* n) {
   return isAtenFunc(n, _tensor_info_funcs);
+}
+
+bool isPropagateQuantNode(Node* n) {
+  return isAtenFunc(n, _propagate_quant_ops);
 }
 
 c10::optional<std::tuple<c10::QScheme, QParamVector>> getFixedQParams(Node* n) {
